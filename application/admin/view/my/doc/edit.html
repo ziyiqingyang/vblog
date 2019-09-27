@@ -1,0 +1,72 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('User_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-user_id" data-rule="required" data-source="user/user/index" data-field="nickname" class="form-control selectpage" name="row[user_id]" type="text" value="{$row.user_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Doc_file')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-doc_file" data-rule="required" class="form-control" size="50" name="row[doc_file]" type="text" value="{$row.doc_file|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="plupload-doc_file" class="btn btn-danger plupload" data-input-id="c-doc_file" data-multiple="false" data-preview-id="p-doc_file"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-doc_file" class="btn btn-primary fachoose" data-input-id="c-doc_file" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-doc_file"></span>
+            </div>
+            <ul class="row list-inline plupload-preview" id="p-doc_file"></ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-name" data-rule="required" class="form-control" name="row[name]" type="text" value="{$row.name|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Filesize')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-filesize" data-rule="required" class="form-control" name="row[filesize]" type="number" value="{$row.filesize|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Mimetype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-mimetype" data-rule="required" class="form-control" name="row[mimetype]" type="text" value="{$row.mimetype|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Extparam')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-extparam" data-rule="required" class="form-control" name="row[extparam]" type="text" value="{$row.extparam|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Uploadtime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-uploadtime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[uploadtime]" type="text" value="{:$row.uploadtime?datetime($row.uploadtime):''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Storage')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-storage" data-rule="required" class="form-control" name="row[storage]" type="text" value="{$row.storage|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Sha1')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-sha1" data-rule="required" class="form-control" name="row[sha1]" type="text" value="{$row.sha1|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
