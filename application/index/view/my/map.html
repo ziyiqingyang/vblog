@@ -1,5 +1,4 @@
 <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=TsdchagPfvvV76LVgEdRXBky"></script>
-
 <style>
     .basicinfo {
         margin: 15px 0;
@@ -42,13 +41,30 @@ map.addControl(stdMapCtrl);
 //map.enableScrollWheelZoom();  
 map.enableContinuousZoom();  
 function getBoundary(data){  
+	
+	//alert(data['brief'])
     var bdary = new BMap.Boundary();  
-    bdary.get(data.split("-")[0], function(rs){  
+	var name = data['brief'];
+    bdary.get(name, function(rs){  
         console.log(rs);  
           
         var maxNum = -1, maxPly;
-        var color = data.split("-")[1];  
-          
+        var color = data['color'];  
+        //不显示随机颜色了，设置旅游过的省份为红色，已经做了计划的省份为绿色，还没做计划的是黄色
+        var t_switch = data['t_switch'];//是否已经去旅游过
+	    var travels_date = data['travels_date'];//旅游时间
+	    var plan_date = data['plan_date'];//计划旅游时间
+	    if(t_switch == 0 ){
+	    	if(plan_date ==''){
+	    		//还没有计划
+	    		var color = '#FCFBBB';  
+	    	}else{
+	    		var color = '#DBEDC7';  
+	    	}
+	    }else{
+	    	var color = '#FBC5DC';  
+	    }
+	    
         var count = rs.boundaries.length;   
         for(var i = 0; i < count; i++){  
             var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 1, strokeOpacity:0.5,fillColor:color,strokeColor: "#000000"});  
@@ -59,42 +75,85 @@ function getBoundary(data){
                 maxPly = ply;  
             } */ 
 
-						//开始用"mouseover","mouseout"发现,鼠标移动过快,会多个省份也高亮了.所以改成 click了
-						ply.addEventListener("click", function (e) {
-						    var latlng = e.point;
-						    var info = new BMap.InfoWindow(name + " " + latlng.lat + "," + latlng.lng, {width:220});
-						    map.openInfoWindow(info, latlng);
-						
-						    //高亮闪烁显示鼠标点击的省
-						    delay = 0;
-						    for (flashTimes = 0; flashTimes < 3; flashTimes++) {
-						        delay += 200;
-						        setTimeout(function () {
-						            ply.setFillColor("#FFFF00");
-						        }, delay);
-						
-						        delay += 200;
-						        setTimeout(function () {
-						            ply.setFillColor(color);
-						        }, delay);
-						    }
-						});
+			//开始用"mouseover","mouseout"发现,鼠标移动过快,会多个省份也高亮了.所以改成 click了
+			ply.addEventListener("click", function (e) {
+			    var latlng = e.point;
+			    
+			    var tr_html = '';
+			    if(t_switch == 0 ){
+			    	if(plan_date ==''){
+			    		//还没有计划
+			    		tr_html = '还没有去过，<a href="javascript:addplan(\''+name+'\','+data['id']+')">添加一个计划</a>吧~';
+			    	}else{
+			    		tr_html = '已经做了计划，要在'+plan_date+'去哦~';
+			    	}
+			    }else{
+			    	tr_html = travels_date +'去过咯';
+			    }
+			    var html = name + '<br>'+tr_html;
+			    var info = new BMap.InfoWindow(html, {width:220});
+			    map.openInfoWindow(info, latlng);
+			
+			    //高亮闪烁显示鼠标点击的省
+			    delay = 0;
+			    for (flashTimes = 0; flashTimes < 3; flashTimes++) {
+			        delay += 200;
+			        setTimeout(function () {
+			            ply.setFillColor("#FFFF00");
+			        }, delay);
+			
+			        delay += 200;
+			        setTimeout(function () {
+			            ply.setFillColor(color);
+			        }, delay);
+			    }
+			});
         }  
         if(maxPly){  
             map.setViewport(maxPly.getPoints());  
         }        
     });  
 }  
-map.clearOverlays();  
-var datas = [
-				"广西-#C8C1E3", "广东-#FBC5DC", "湖南-#DBEDC7", "贵州-#E7CCAF", "云南-#DBEDC7",
-        "福建省-#FCFBBB", "江西-#E7CCAF", "浙江-#C8C1E3", "安徽-#FBC5DC", "湖北-#C8C1E3",
-        "河南-#DBECC8", "江苏-#DBECC8", "四川-#FCFBBB", "海南省-#FCFBBB", "山东-#FCFBBB", "辽宁-#FCFBBB",
-        "新疆-#FCFBBB", "西藏-#E7CCAF", "陕西-#E7CCAF", "河北-#E7CCAF", "黑龙江-#E7CCAF", "宁夏-#FBC5DC",
-        "内蒙古自治区-#DBEDC7", "青海-#DBEDC7", "甘肃-#C8C1E3", "山西-#FBC5DC", "吉林省-#C8C1E3",
-        "北京-#FBC5DC", "天津-#C8C1E3", "上海-#FCFBBB", "重庆市-#FBC5DC", "香港-#C8C1E3"
-];
 
+function addplan(proname,id){
+	//页面层
+
+	layer.open({
+	  type: 1,
+	  title:'为'+proname+'添加旅行计划',
+	  skin: 'layui-layer-rim', //加上边框
+	  area: ['420px', '240px'], //宽高
+	  content:'<input id="c-pro_id" type = "hidden" value="'+id+'">'+
+		    '<div class="form-group" style="margin:20px 20px;">'+
+		    '    <label class="control-label col-xs-12 col-sm-4">计划时间:</label>'+
+		    '    <div class="col-xs-12 col-sm-8">'+
+		    '<input id="c-plan_date" type="date" value="{:date(\'Y-m-d\')}"/>'+
+		    // '       <input id="c-plan_date" class="datetimepicker" data-date-format="YYYY-MM-DD" data-use-current="true" type="text" value="{:date(\'Y-m-d\')}">'+
+		    '    </div>'+
+		   ' </div>'+
+		    
+		   '<div class="form-group "  style="margin-top:80px ">'+
+
+		   '     <div style="text-align:center">'+
+		     '       <button  onclick = doadd('+id+') class="btn btn-success btn-embossed ">确定</button>'+
+		    '    </div>'+
+		   ' </div>'+
+		'</form>'
+	});
+}
+
+function doadd(proid){
+	$.post("/index/my/doaddplan",{proid:proid,plan_date:$('#c-plan_date').val()},function(result){
+	 
+	    if(result.status == 1){
+	    	alert('计划添加成功');
+	    	//window.location.reload();  
+	    }
+	  },'json');
+}
+map.clearOverlays();  
+
+var datas = {$provincelist};
 
 for(var i=0;i<datas.length;i++){  
     getBoundary(datas[i]);  
