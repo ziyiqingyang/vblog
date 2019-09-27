@@ -29,7 +29,7 @@ class My extends Frontend
 
     public function map()
     {
-        
+        //获取省份列表和旅行计划
         return $this->fetch();
     }
 }
